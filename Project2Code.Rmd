@@ -1,0 +1,119 @@
+---
+title: "Project 2 Code"
+output: html_notebook
+---
+
+INTRODUCTION
+Scientific Question: Does the nsp3 protein contribute to making SARS-CoV-2 extremely lethal and transmittable in comparison to other coronaviruses that are known as the common cold like hCov-229E?
+
+Background: 
+The SARS-CoV-2 virus has been known to cause a global epidemic in the last few years. This strain is part of a family of viruses called coronavirus. The coronavirus is not something new, in fact this is the same family that the SARS epidemic and MERS epidemic stemmed from years ago. In addition, many of the common colds in our society today are also cornaviruses. One example of a common cold coronavirus is hCov-229E. Both of these viruses have the same nsp3 protein but, both viruses have very different levels of severity. There have been pre-existing reports on how even though these two proteins are present in two diffeerent strains but have differences between then. For instance, when comparing the nsp3 protein between hCov-OC43 and SARS-CoV-2 we see that there is a difference in the amino acids in certain positions that stabilize or destabilize protein.
+
+Hypothesis:
+If the genome of SARS-CoV-2 is more pathogenic, lethal, and contagious compared to a coronavirus of the common cold like hCov-OC43, then if the genome of the nsp3 protein in SARS-CoV-2 was to be compared to the same genome of hCov-OC43, there must be a clear distinction of the two genomes when looking at the alignment or protein expression of the two proteins in the two distinct viruses.
+
+Analyses:
+Pairwise Sequence Alignment
+Structural Bioinformatics
+Plotting: msaPrettyPrint, display of protein structures
+
+LOADING PACKAGES:
+seqinr: provides tools for data analysis and data visualzation for boilogical sequencees (DNA and RNA sequences)
+Biostrings: aid in efficient manipulation and viewing of biological strings
+msa: provides multiple sequence alignment algorithms to biological sequences
+bio3d: contains utilities for the analysis of protein structure, sequence and trajectory data
+rgl: provides functiosn to aid in 3d interactive graphics
+bio3d.view: helps view protein strucutes from PDB
+tinytex: aid in latex and pdf output formats
+
+```{r}
+library('seqinr')
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("Biostrings")
+library("Biostrings")
+#BiocManager::install("msa")
+library('msa')
+#install.packages('tinytex')
+#tinytex::install_tinytex()
+library(bio3d)
+#install.packages("devtools")
+#devtools::install_bitbucket("Grantlab/bio3d-view")
+#install.packages("rgl")
+library(rgl)
+library("bio3d.view")
+```
+
+Method: Pairwise Sequence alignment
+This is used to identify areas of similarity or homology between two sequences, either protein or nucleotide. Through this, we can see what combination of insertions, deletions, and matches help align the two sequences. The higher number of matches indicates more similarity between the two sequences. The program used is msa which is a tool that focuses on mulitple sequence alignment. These seequences were obtained by NCBI.
+
+Plotting Result: The plotting of this result is a pdf that displays the alignment between the two protein sequences called "alignment.pdf". In this pdf file, the parts that have an amino acid on both lines, it means that there is an alignment match/mismatch there. If it is colored in blue, it is conserved meaning there is a match and if its white, it means it is non conserved and there is not a match. I have attatched screenshots of the alignment pdf below:
+![alignment1](alignmentpdfpart1.png)
+![alignment2](alignmentpdfpart2.png)
+
+Analysis:
+This alignment shows that in fact there are only a small amount of sequences that align to each other. This hints that these two protein sequences are actually more different that alike. These differences show that the two proteins are actually quite different and these differences can account for differences in the impact these two viruses have. 
+
+```{r}
+protein_229E <- read.fasta('229E.fasta')
+SARS_protien <- read.fasta('SARS.fasta')
+protein_229E <- toupper(protein_229E)
+SARS_protien <- toupper(SARS_protien)
+seqs <- readAAStringSet("nsp3_sequences.fasta")
+seqs
+alignment <- msa(seqs)
+a <- msaPrettyPrint(alignment, output="pdf", showNames="none", showLogo="none", askForOverwrite=FALSE, verbose=FALSE)
+```
+
+Method: Structural Bioinformatis/Homology Modelling
+This is used to compare the structures of two proteins. We can use PDB to get thee structure of the X-domain in the nsp3 proteins of both hCov-229E and SARS-Cov-2. By using bio3d we can read pdb files and get a visual of both structures. Then, we can see visual differences between the two. The images of the two structures are below:
+
+Differences between the two visually are below:
+![229eprotein](229eprotein.png)
+![Sarsprotein](Sarsprotein.png)
+
+These structures can also be viewed on a software called pyMol and look at structures and thier alpha and beta sheets. These images are below:
+
+![229epymol](229epymol.png)
+![229epymol](sarspymol.png)
+
+- the 229e protein seems smaller
+- the sars protein seeems to bee more constricted and packed with different molecules/functional groups
+- the 229e protein has overall longer alpha helices
+- the 229e protein has one more beta sheet
+
+Analysis:
+For the analysis various strucutral measurements were calculated including center of mass, biounit, and radius of gyration. Center of mass is where the distributed weight is 0. The fact that both of these strucutres have different centers of masses proves that there is a difference in stability and distribution in the two proteins. Through biounit, we can see that there are more atoms and non-protein residues in the sars-cov-2 nsp3 proteien. Finally, we see that the sars-cov-2 protein has a greater radius of gyration which means there is more stability in this virus' protein in comparison to the common cold one.
+
+
+```{r}
+sars_cov_2_protein <- read.pdb("6wey.pdb")
+h_cov_229e_protein <- read.pdb("3ejg.pdb")
+```
+
+```{r}
+view.pdb(sars_cov_2_protein, "overview", col="sse")
+```
+
+```{r}
+view.pdb(h_cov_229e_protein, "overview", col="sse")
+```
+
+```{r}
+com.pdb(sars_cov_2_protein)
+com.pdb(h_cov_229e_protein)
+```
+
+```{r}
+biounit(sars_cov_2_protein)
+biounit(h_cov_229e_protein)
+```
+
+
+```{r}
+rgyr(sars_cov_2_protein)
+rgyr(h_cov_229e_protein)
+```
+
+
+
