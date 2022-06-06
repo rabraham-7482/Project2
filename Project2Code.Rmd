@@ -4,27 +4,35 @@ output: html_notebook
 ---
 
 INTRODUCTION
-Scientific Question: Does the nsp3 protein contribute to making SARS-CoV-2 extremely lethal and transmittable in comparison to other coronaviruses that are known as the common cold like hCov-229E?
+
+Scientific Question: 
+
+Does the nsp3 protein contribute to making SARS-CoV-2 extremely lethal and transmittable in comparison to other coronaviruses that are known as the common cold like hCov-229E?
 
 Background: 
-The SARS-CoV-2 virus has been known to cause a global epidemic in the last few years. This strain is part of a family of viruses called coronavirus. The coronavirus is not something new, in fact this is the same family that the SARS epidemic and MERS epidemic stemmed from years ago. In addition, many of the common colds in our society today are also cornaviruses. One example of a common cold coronavirus is hCov-229E. Both of these viruses have the same nsp3 protein but, both viruses have very different levels of severity. There have been pre-existing reports on how even though these two proteins are present in two diffeerent strains but have differences between then. For instance, when comparing the nsp3 protein between hCov-OC43 and SARS-CoV-2 we see that there is a difference in the amino acids in certain positions that stabilize or destabilize protein.
+
+The SARS-CoV-2 virus has been known to cause a global epidemic in the last few years. This strain is part of a family of viruses called coronavirus. The coronavirus is not something new, in fact this is the same family that the SARS epidemic and MERS epidemic stemmed from years ago. In addition, many of the common colds in our society today are also cornaviruses. One example of a common cold coronavirus is hCov-229E. Both of these viruses have the same nsp3 protein but, both viruses have very different levels of severity. There have been pre-existing reports on how even though these two proteins are present in two diffeerent strains but have differences between them. 
+It is known that the n protein reside in CoV RNA synthesis sites (Khan). In addition, the nsp3 protein has has 17 domain and regions and can binds to viral DNA and is part of the polyprotein processing (Lei).However, the nsp3 protein was the most divergent protein when comparing different strains of cornavirus (Claverie). Another important thing to note is that different strains have slight differences in amino acid sequence and these difference can either stabilize or destabilize multiple parts of the virus. When comparing orf1a gene, the diffeerences noted were in position 501, 723 and 101 when comparing SARS to the bat-like corona virus (Angeletti). The amino acid mutations played a role in destabilizing the nsp3 protein in SARS (Angeletti). This demonstrates that there can be significant differences within similar parts of the coronavirus from different strains. Therefore, I want to perform further analysis on the nsp3 protein n hCov-229E and SARS-Cov-2. 
 
 Hypothesis:
-If the genome of SARS-CoV-2 is more pathogenic, lethal, and contagious compared to a coronavirus of the common cold like hCov-OC43, then if the genome of the nsp3 protein in SARS-CoV-2 was to be compared to the same genome of hCov-OC43, there must be a clear distinction of the two genomes when looking at the alignment or protein expression of the two proteins in the two distinct viruses.
+
+If SARS-COV-2 is more transmissible in comparison to hCov-OC43 then the alignment between the two amino acid sequences will only have around 80% matches and the protein structure of the the nsp3 protein in SARS-COV-2 will have a different set of alpha and beta sheets making up the X domain when compared to the same domain in hCov-OC43.
 
 Analyses:
-Pairwise Sequence Alignment
-Structural Bioinformatics
-Plotting: msaPrettyPrint, display of protein structures
 
-LOADING PACKAGES:
-seqinr: provides tools for data analysis and data visualzation for boilogical sequencees (DNA and RNA sequences)
+Here we perform Pairwise Sequence Alignment and Structural Bioinformatics/Homology modelling. Pairwise sequence alignment is essentially used to identify the sequence identity between the amino acid sequence for the nsp3 protein in hCov-229E and SARS-Cov-2. Through this, we can see what combination of insertions, deletions, and matches help align the two sequences. The higher number of matches indicates more similarity between the two sequences. These sequences were obtained by NCBI. Through the use of msa and msaPrettyPrint() a publication stylee alignment is outputted where conserved amino acids and non conserved amino acids can be seen. We will also perform strucutral analysis of the X domain of the nsp3 protein in both viruses. Through the use of Bio3D and PDB, we can obtain and display the strucutre of both and visually find differences as well as compare calculations of difference measurements like center of mass, radius of gyration, and bio units. In addition, an alignment of the protein structures can also be done (homology modelling) using PyMol. Through this, we will see how thee two structures look like on top of each other so differences in things like alpha helices and beta sheeets can be more clearly seen. 
+
+Package Descriptions:
+
+seqinr: provides tools for data analysis and data visualzation for biological sequences (DNA and RNA sequences)
 Biostrings: aid in efficient manipulation and viewing of biological strings
 msa: provides multiple sequence alignment algorithms to biological sequences
 bio3d: contains utilities for the analysis of protein structure, sequence and trajectory data
 rgl: provides functiosn to aid in 3d interactive graphics
 bio3d.view: helps view protein strucutes from PDB
 tinytex: aid in latex and pdf output formats
+
+Loading Packages:
 
 ```{r}
 library('seqinr')
@@ -44,76 +52,101 @@ library(rgl)
 library("bio3d.view")
 ```
 
-Method: Pairwise Sequence alignment
-This is used to identify areas of similarity or homology between two sequences, either protein or nucleotide. Through this, we can see what combination of insertions, deletions, and matches help align the two sequences. The higher number of matches indicates more similarity between the two sequences. The program used is msa which is a tool that focuses on mulitple sequence alignment. These seequences were obtained by NCBI.
-
-Plotting Result: The plotting of this result is a pdf that displays the alignment between the two protein sequences called "alignment.pdf". In this pdf file, the parts that have an amino acid on both lines, it means that there is an alignment match/mismatch there. If it is colored in blue, it is conserved meaning there is a match and if its white, it means it is non conserved and there is not a match. I have attatched screenshots of the alignment pdf below:
-![alignment1](alignmentpdfpart1.png)
-![alignment2](alignmentpdfpart2.png)
-
-Analysis:
-This alignment shows that in fact there are only a small amount of sequences that align to each other. This hints that these two protein sequences are actually more different that alike. These differences show that the two proteins are actually quite different and these differences can account for differences in the impact these two viruses have. 
+Pairwise Sequence Alignment:
 
 ```{r}
-protein_229E <- read.fasta('229E.fasta')
-SARS_protien <- read.fasta('SARS.fasta')
-protein_229E <- toupper(protein_229E)
-SARS_protien <- toupper(SARS_protien)
-seqs <- readAAStringSet("nsp3_sequences.fasta")
-seqs
-alignment <- msa(seqs)
-a <- msaPrettyPrint(alignment, output="pdf", showNames="none", showLogo="none", askForOverwrite=FALSE, verbose=FALSE)
+#file_name is a variable with the name of the fasta file of amino acid sequences from both viruses
+file_name <- "nsp3_sequences.fasta"
+#Below is a function that performs the entire alignment and produces a PDF with the alignment
+Alignment <- function(sequence_file) {
+  #This function reads the amino acid sequences in both nsp3 protein sequences and reads it as an amino acid string set. The file "nsp3_sequences.fasta"     was created by inputting the amino acid sequences for each virus. The amino acid sequences were obtained from NCBI.
+  seqs <- readAAStringSet("nsp3_sequences.fasta")
+  seqs
+  #an alignment is performed of the two amino acid sequenced read in with readAAStringSet()
+  alignment <- msa(seqs)
+  #generate a PDF with a publication style alignment display. Logos are shown on the top of every line. 
+  a <- msaPrettyPrint(alignment, output="pdf", showNames="none", showLogo="top", askForOverwrite=FALSE, verbose=FALSE)
+}
+#Function made prior is called to perfrom an alignmet using the fasta file in file_name vairable
+align <- Alignment(file_name)
+
 ```
 
-Method: Structural Bioinformatis/Homology Modelling
-This is used to compare the structures of two proteins. We can use PDB to get thee structure of the X-domain in the nsp3 proteins of both hCov-229E and SARS-Cov-2. By using bio3d we can read pdb files and get a visual of both structures. Then, we can see visual differences between the two. The images of the two structures are below:
+**Even though an error is produced, still have a pdf with the alignemnt produced in the same direcotry as this file
 
-Differences between the two visually are below:
-![229eprotein](229eprotein.png)
-![Sarsprotein](Sarsprotein.png)
+Plotting Result: 
 
-These structures can also be viewed on a software called pyMol and look at structures and thier alpha and beta sheets. These images are below:
+The plotting of this result is a pdf that displays the alignment between the two protein sequences called "alignment.pdf". In this pdf file, the parts that have an amino acid on both lines, it means that there is an alignment match/mismatch there. If it is colored in blue, it is conserved meaning there is a match and if its white, it means it is non conserved and there is not a match. Also, sequence logos are displayed on the top of every line. I have attached screenshots of the alignment pdf below:
+![alignment1](alignment_new_1.png)
+![alignment2](alignment_new_2.png)
+![alignment3](alignment_new_3.png)
+Analysis of Results:
 
-![229epymol](229epymol.png)
-![229epymol](sarspymol.png)
+This alignment shows that in fact there are only a small amount of sequences that align to each other. This hints that these two protein sequences are actually more different than alike. The alignment shows that there are small snippets of alignment which could be because of the difference in length of amino acid sequence between the two proteins. In total, there are 15 snippets that are aligned between the two sequences. There are around 61 amino acids that are matches. The rest are either deletions or mismatches. Since the longer protein has 1945 amino acids. It does not share the around 80% sequence match. In fact the sequence identity of the alignment between the two sequences is drastically less than 80%, it is more around 3% (61/1945). This however, supports the idea that there are apparent differences between the nsp3 protein in SARS-Cov-2 and hCov-229E. Further analysis with homology modelling and structural analysis will be done in the future.
 
-- the 229e protein seems smaller
-- the sars protein seeems to bee more constricted and packed with different molecules/functional groups
-- the 229e protein has overall longer alpha helices
-- the 229e protein has one more beta sheet
-
-Analysis:
-For the analysis various strucutral measurements were calculated including center of mass, biounit, and radius of gyration. Center of mass is where the distributed weight is 0. The fact that both of these strucutres have different centers of masses proves that there is a difference in stability and distribution in the two proteins. Through biounit, we can see that there are more atoms and non-protein residues in the sars-cov-2 nsp3 proteien. Finally, we see that the sars-cov-2 protein has a greater radius of gyration which means there is more stability in this virus' protein in comparison to the common cold one.
-
+Method: Structural Bioinformatics/Homology Modelling
 
 ```{r}
+# each variable holds the return value of the read.pdb function for each pdb file. Thre return value is a list of class pdb wiht multiple components
 sars_cov_2_protein <- read.pdb("6wey.pdb")
 h_cov_229e_protein <- read.pdb("3ejg.pdb")
 ```
 
 ```{r}
+#function displays the protein strcuture based on the variable with the output of read.pdb() for sars-cov-2
 view.pdb(sars_cov_2_protein, "overview", col="sse")
 ```
 
 ```{r}
+#function displays the protein strcuture based on the variable with the output of read.pdb() for hvoc-229e
 view.pdb(h_cov_229e_protein, "overview", col="sse")
 ```
 
 ```{r}
+#function calculates the center of mass for both viruses based on the variable with the output of read.pdb() for both
 com.pdb(sars_cov_2_protein)
 com.pdb(h_cov_229e_protein)
 ```
 
 ```{r}
+#function calculates biological units for both viruses based on the variable with the output of read.pdb() for both
 biounit(sars_cov_2_protein)
 biounit(h_cov_229e_protein)
 ```
 
 
 ```{r}
+#function calculates the radius of gyration for both viruses based on the variable with the output of read.pdb() for both
 rgyr(sars_cov_2_protein)
 rgyr(h_cov_229e_protein)
 ```
 
+This is used to compare the structures of two proteins. We can use PDB to get the structure of the X-domain in the nsp3 proteins of both hCov-229E and SARS-Cov-2. By using bio3d we can read pdb files and get a visual of both structures. Then, we can see visual differences between the two. The images of the two structures are below:
 
+Differences between the two visually are below:
+![229eprotein](229eprotein.png)
+![Sarsprotein](Sarsprotein.png)
 
+These structures can also be viewed on a software called pyMol and look at structures and their alpha and beta sheets. These images are below:
+
+![229epymol](229epymol.png)
+![229epymol](sarspymol.png)
+
+The differences seen between the two structures are below:
+- the 229e protein seems smaller
+- the sars protein seems to bee more constricted and packed with different molecules/functional groups
+- the 229e protein has overall longer alpha helices
+- the 229e protein has one more beta sheet
+
+Homology Modelling:
+
+This was done with PyMol and using the same two strucures that were fetched from PDB. These two structures were aligned using the align command and the following was produced:
+![homologymodel](homologymodel.png)
+
+Analysis of Results:
+
+For the analysis various structural measurements were calculated including center of mass, biounit, and radius of gyration. Center of mass is where the distributed weight is 0. The fact that both of these structures have different centers of masses proves that there is a difference in stability and distribution in the two proteins. Through biounit, we can see that both structures are just one chain. However, there are more atoms and non-protein nucelic acids and residues in the sars-cov-2 nsp3 protein. Finally, we see that the sars-cov-2 protein has a greater radius of gyration which means there is more stability in this virus' protein in comparison to the common cold one. Looking at the homology modelling image, it is seen that even with the slight differences that were seen using Bio3D and looking at the proteins separately in PyMol. When aligned, it is seen that the x domain of the nsp3 protein of both viruses are actually pretty similar. Most of the time the beta and alpha sheets align with each other. There is one alpha helix that is separate in the two proteins and are not directly on top of each other Also, there are one or two instances where the beta sheet is longer in the hCov-229e virus in comparison to SARS-Cov-2. 
+
+Overall Analysis:
+
+Looking at all the analysis methods it can be concluded that hypothesizing that the amino acid sequence for the nsp3 protein in sars-cov-2 and hcov-229e have a 80% sequence identity is too high of a match. In reality, pairwise sequence alignment shows that the sequence similarity between the two viruses is much lower. However when comparing the structures of the two proteins, they are pretty similar with the homology model lining up for the most part. The similarity in strcuture between these two protein strucutre provides a bit of a contradiction to the low sequence similarity through the alignment in the two viruses. Howeever, something to consider is that this is only one domain out of the many in the nsp3 protein. So, it is possible that the x domain specifically does not have that many differences.
