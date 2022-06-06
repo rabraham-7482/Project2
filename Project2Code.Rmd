@@ -25,11 +25,17 @@ Here we perform Pairwise Sequence Alignment and Structural Bioinformatics/Homolo
 Package Descriptions:
 
 seqinr: provides tools for data analysis and data visualzation for biological sequences (DNA and RNA sequences)
+
 Biostrings: aid in efficient manipulation and viewing of biological strings
+
 msa: provides multiple sequence alignment algorithms to biological sequences
+
 bio3d: contains utilities for the analysis of protein structure, sequence and trajectory data
+
 rgl: provides functiosn to aid in 3d interactive graphics
+
 bio3d.view: helps view protein strucutes from PDB
+
 tinytex: aid in latex and pdf output formats
 
 Loading Packages:
